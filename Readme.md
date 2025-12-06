@@ -178,3 +178,188 @@ Once the pull request is reviewed and approved, you can merge the changes into t
    ```
 
 By following these steps, each developer can work independently, and the code will eventually be merged into the `main` branch without conflicts.
+
+---
+
+# 🧠 Math Coach IA – Tutoriel Intelligent (1ère Bac SM – Maroc)
+
+## 👤 Responsable
+**Hamza Benatmane**
+
+---
+
+## 🎯 Objectif du Module
+
+Ce module ajoute à la plateforme un **chat intelligent de mathématiques** destiné aux élèves de :
+
+> ✅ **1ère Année Bac Science Math – Programme Marocain BIOF**
+
+Le système agit comme un **Coach pédagogique**, pas comme un solveur automatique :
+
+- ✅ Il **explique les notions du cours**
+- ✅ Il utilise une **double couche pédagogique** :
+  - `[OFFICIEL]` → texte du cours
+  - `[COACH]` → intuition, métaphores, visualisations
+- ❌ Il **refuse de résoudre directement les exercices** (anti-triche)
+
+Chaque réponse suit obligatoirement le format pédagogique :
+
+1. 🎯 Définition  
+2. 💡 Intuition (Coach)  
+3. 🎨 Visualisation  
+4. ⚠️ Pièges  
+
+---
+
+## 🏗️ Architecture Technique
+
+### 1. Frontend (Next.js 15 – React 19)
+
+Nouvelle page :
+
+```
+
+/chat
+
+```
+
+Technologies :
+
+- `assistant-ui` pour l’interface de chat
+- `KaTeX` pour formules mathématiques
+- Rendu Markdown + visualisation automatique des images `[Image of ...]`
+- Interface full-screen type **ChatGPT**
+
+Flux :
+
+```
+
+Élève → /chat → /api/chat (Next.js) → FastAPI (RAG) → Réponse pédagogique
+
+```
+
+---
+
+### 2. Backend (FastAPI – RAG)
+
+Repo séparé :
+
+```
+
+[https://github.com/hamzaben404/rag-mathtuto](https://github.com/hamzaben404/rag-mathtuto)
+
+```
+
+Stack :
+
+- **LLM** : Gemini 2.5 Flash
+- **Embeddings** : `text-embedding-004` (Gemini)
+- **Vector DB** : Qdrant
+- **Recherche textuelle** : Meilisearch
+- **Reranker** : Cohere `rerank-multilingual-v3.0`
+
+Pipeline :
+
+```
+
+Question → Meilisearch + Qdrant → Fusion → Rerank → Gemini → Fiche Concept
+
+```
+
+---
+
+## 📚 Chapitre Actuel Supporté
+
+✅ Logique mathématique :
+
+- Quantificateurs
+- Implication
+- Négation
+- Réciproque / Contraposée
+- Erreurs fréquentes
+
+(Système extensible à : fonctions, dérivées, probabilités, barycentre…)
+
+---
+
+## 🖥️ Interface Élève (Chat)
+
+Fonctionnalités :
+
+- ✅ Écran d’accueil central (type ChatGPT)
+- ✅ Suggestions automatiques de questions
+- ✅ Entrée flottante fixe
+- ✅ Scroll fluide pour longues réponses
+- ✅ Boutons : copier, régénérer, modifier message
+
+---
+
+## 🔗 Intégration avec le Projet Principal
+
+Le bouton **“Commencer”** dans la page d’accueil redirige maintenant vers :
+
+```
+
+/chat
+
+```
+
+L’API côté frontend :
+
+```
+
+app/api/chat/route.ts
+
+```
+
+Proxy vers :
+
+```
+
+[http://localhost:8000/explain](http://localhost:8000/explain)
+
+````
+
+---
+
+## 🚀 Lancement en Local (Résumé)
+
+### Frontend
+
+```bash
+npm install
+npm run dev
+````
+
+Puis ouvrir :
+
+```
+http://localhost:3000/chat
+```
+
+---
+
+### Backend
+
+```bash
+cd rag-mathtuto
+docker compose up -d
+docker build -t mathtuto-api .
+docker run -p 8000:8000 --env-file .env mathtuto-api
+```
+
+Test :
+
+```bash
+curl http://localhost:8000/health
+```
+
+---
+
+## ✅ Statut Actuel
+
+* ✅ UI du Chat intégrée
+* ✅ RAG fonctionnel
+* ✅ Backend connecté
+* ✅ Réponses pédagogiques conformes
+* ✅ Anti-triche actif
